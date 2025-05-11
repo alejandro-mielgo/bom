@@ -33,6 +33,7 @@ def register():
                 )
                 db.commit()
             except db.IntegrityError:
+                print(db.IntegrityError)
                 error = f"User {username} is already registered."
             else:
                 return redirect(url_for("auth.login"))
@@ -84,6 +85,7 @@ def load_logged_in_user():
 @bp.route('/logout')
 def logout():
     session.clear()
+    g.user=None
     return redirect("/")
 
 

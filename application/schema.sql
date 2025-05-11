@@ -8,8 +8,7 @@ CREATE TABLE user (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   username TEXT UNIQUE NOT NULL,
   password TEXT NOT NULL,
-  email TEXT UNIQUE,
-  profile_picture TEXT UNIQUE
+  email TEXT UNIQUE
 );
 
 CREATE TABLE bom (
@@ -39,6 +38,7 @@ CREATE TABLE project(
   prefix TEXT UNIQUE NOT NULL,
   last_pn INTEGER NOT NULL DEFAULT 0
 );
+
 
 
 INSERT INTO project (number, name, prefix, last_pn)

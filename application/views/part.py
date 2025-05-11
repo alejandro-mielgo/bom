@@ -2,6 +2,7 @@ from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
 from .db import get_db
+from .auth import login_required
 
 bp = Blueprint('part', __name__, url_prefix='/part')
 
@@ -79,6 +80,7 @@ def generate_bom(part_number: str)->dict:
     ''',
     (part_number, part_number)
     ).fetchall()
+
     return child_parts
 
 
@@ -101,6 +103,7 @@ def search():
 
 
 @bp.route('/create', methods=('GET', 'POST'))
+@login_required
 def create():
     units:tuple[str] = ('units','kg','litres','meters')
     prefixes:list[str] = get_project_prefixes()
@@ -134,16 +137,7 @@ def create():
 def view(part_number):
 
     part = get_part_info(part_number=part_number)
-    print(part)
+
     bom = generate_bom(part_number=part_number)
-    for row in bom:
-        print(dict(row))
-    return render_template('part/view.html', part=part, bom=bom)
 
-
-@bp.route('/parts')
-def api_get_all_parts():
-    parts = get_all_parts()
-    return [dict(part) for part in parts]
-
-
+    return render_template('part/info.html', part=part, bom=bom)
