@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h2>{% block title %}Search{% endblock %}</h2>
+{% endblock %}
+
+{% block content %}
+  <form method="post">
+    <div class="mb-3">
+      <label for="search_term" class="form-label">Search by part number or name</label>
+      <input type="text" class="form-control" id="search_term" name="search_term" required>
+    </div>
+    <input type="submit" value="Search">
+  </form>
+  <hr>
+  {% for part in parts %}
+    <div>
+      <label><a href="/part/{{part['part_number']}}">{{part['part_number']}}</a> </label> - 
+      <label>{{part['name']}} </label>
+    </div>
+  {% endfor %}
+
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h2>{% block title %}Create PN{% endblock %}</h2>
+{% endblock %}
+
+{% block content %}
+  <form method="post">
+    <div class="mb-3">
+      <label for="prefix" class="form-label">Part number</label>
+      <select type="text" class="form-control" id="prefix" name="prefix" required>
+        {% for prefix in prefixes%}
+            <option value="{{prefix}}">{{prefix}} </option>
+        {% endfor %}
+      </select>
+
+      <label for="name" class="form-label">Part name</label>
+      <input type="text" class="form-control" id="name" name="name" required>
+
+      <label for="measure_unit" class="form-label">measure units</label>
+      <select type="text" class="form-control" id="measure_unit" name="measure_unit" required>
+        {% for unit in units%}
+        <option value="{{unit}}">{{unit}} </option>
+        {% endfor %}
+      </select> 
+      
+    </div>
+    <input type="submit" value="Create PN">
+  </form>
+  <hr>
+
+{% endblock %}
