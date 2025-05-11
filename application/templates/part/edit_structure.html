@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}{{part['part_number']}}{% endblock %}
+
+{% block header %}
+
+{% endblock %}
+
+
+
+{% block content %}
+    <div class="py-3"> 
+    <h4 class="d-inline align-middle">Part Info</h4>
+    <a href ="/part/{{part['part_number']}}/edit_info" 
+       class="btn btn-primary p-2 d-inline align-middle d-inline align-middle ml-2 disabled" disabled>Edit Info</a>
+    </div>
+
+    <div>
+      <p>part number - {{part['part_number']}} </p> 
+      <p>name - {{part['name']}} </p>
+      <p>meaure unit - {{part['measure_unit']}} </p>
+      <p>status - {{part['status']}} </p>
+      <p>created - {{part['created']}} </p>
+      <p>last_modified - {{part['last_modified']}} </p>
+
+      <div class="py-3 ">
+        <h4 class="d-inline align-middle py-2 ">Structure for {{part['part_number']}}</h4> 
+        <a href ="#" class="btn btn-primary p-2 d-inline align-middle mx-2">Save Changes</a>
+        <a href ="/part/{{part['part_number']}}" class="btn btn-secondary p-2 d-inline align-middle mx-2">Cancel</a>
+      </div>
+
+      <table class="table" id="bom-table">
+        <tr>
+          <th>Part number</th>
+          <th>Name</th>
+          <th>Quantity</th>
+          <th>Unit</th>
+          <th>Status</th>
+        </tr>
+        {% for row in bom %}
+          <tr>
+            <td class="pn-level-{{row['level']}}">
+              <a href="/part/{{row['part_number']}}">{{ row['part_number'] }}</a> 
+            </td>
+            <td class='part-name'><a class="btn btn-danger">x</a> {{ row['name'] }}</td>
+            <td class='part-quantity'>
+              <a class="btn btn-light" id="decrease-{{row['part_number']}}">-</a>
+              {{ row['quantity'] }}
+              <a class="btn btn-light" id="increase-{{row['part_number']}}">+</a>
+            </td>
+            <td class="part_measure_unit">{{ row['measure_unit']}}</td>
+            <td class="part_status">{{ row['status']}}</td>
+          </tr>
+        {% endfor %}
+      </table>
+    
+
+    </div>
+
+{% endblock %}

@@ -1,6 +1,8 @@
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
+from datetime import datetime
+
 from .db import get_db
 from .auth import login_required
 
@@ -37,8 +39,10 @@ def increment_number(prefix:str,last_number:int)->None:
 def get_part_info(part_number:str)->dict:
     db=get_db()
     part = db.execute(
-        'SELECT * FROM part WHERE part_number=?',(part_number,)
+        'SELECT * FROM part JOIN user ON part.owner_id=user.id'
+        ' WHERE part_number=?',(part_number,)
     ).fetchone()
+    print(dict(part))
     return part
 
 
@@ -113,18 +117,18 @@ def create():
     
     
     if request.method=='POST':
-        print(dict(request.form))
+ 
         prefix:str = request.form['prefix']
         name:str = request.form['name']
         measure_unit:str = request.form['measure_unit']
         last_pn:int = get_last_number(prefix=prefix)
         part_number = f"{prefix}-{str(last_pn+1).zfill(4)}"
-        
+ 
         db=get_db()
         db.execute(
             'INSERT into part (part_number, name, measure_unit, owner_id, status)'
             ' VALUES (?,?,?,?,?)',
-            (part_number, name, measure_unit,g.user['id'],"creation")
+            (part_number, name, measure_unit, g.user['id'],"creation")
         )
         db.commit()
         increment_number(prefix=prefix,last_number=last_pn)
@@ -137,7 +141,44 @@ def create():
 def view(part_number):
 
     part = get_part_info(part_number=part_number)
-
     bom = generate_bom(part_number=part_number)
 
     return render_template('part/info.html', part=part, bom=bom)
+
+@bp.route('/<string:part_number>/edit_structure', methods=('GET','POST'))
+@login_required
+def edit_structure(part_number):
+    if request.method=='GET':
+        part = get_part_info(part_number=part_number)
+        bom = generate_bom(part_number=part_number)
+    
+    return render_template('part/edit_structure.html', part=part, bom=bom)
+
+
+@bp.route('/<string:part_number>/edit_info', methods=('GET','POST'))
+@login_required
+def edit_info(part_number):
+    if request.method=='GET':
+        part = get_part_info(part_number=part_number)
+        bom = generate_bom(part_number=part_number)
+        return render_template('part/edit_info.html', part=part, bom=bom)
+        
+    if request.method=='POST':
+        print(dict(request.form))
+        name=request.form['name']
+        measure_unit=request.form['measure_unit']
+        status=request.form['status']
+        last_modified = datetime.now()
+    
+        db=get_db()
+        db.execute(
+            'UPDATE part'
+            ' SET name = ?, measure_unit = ?, status=?, last_modified=?'
+            ' WHERE part_number = ?',
+            (name,measure_unit,status,last_modified,part_number)
+        )
+        db.commit()
+
+    part = get_part_info(part_number=part_number)
+    bom = generate_bom(part_number=part_number)
+    return redirect(f'/part/{part_number}')

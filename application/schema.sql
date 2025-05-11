@@ -44,7 +44,7 @@ CREATE TABLE project(
 INSERT INTO project (number, name, prefix, last_pn)
 VALUES
 ("AAAA-0000","proyecto coche","AAAA",6),
-("BBBB-0000","proyecto moto","BBBB",-1);
+("BBBB-0000","proyecto moto","BBBB",0);
 
 
 INSERT INTO part (part_number,name,owner_id,status,measure_unit)
