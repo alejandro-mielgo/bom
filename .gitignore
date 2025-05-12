@@ -1,4 +1,4 @@
 .venv
 instance
-__pycache__
-views/__pycache__
+aplication/__pycache__
+aplication/views/__pycache__
