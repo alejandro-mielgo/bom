@@ -2,13 +2,21 @@ DROP TABLE IF EXISTS user;
 DROP TABLE IF EXISTS bom;
 DROP TABLE IF EXISTS part;
 DROP TABLE IF EXISTS project;
+DROP TABLE IF EXISTS userinfo;
 
 
 CREATE TABLE user (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  username TEXT UNIQUE NOT NULL,
+  username TEXT PRIMARY KEY,
   password TEXT NOT NULL,
   email TEXT UNIQUE
+);
+
+CREATE TABLE userinfo(
+  username TEXT PRIMARY KEY,
+  department TEXT,
+  position TEXT,
+  created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_user_info FOREIGN KEY(username) REFERENCES user(username)
 );
 
 CREATE TABLE bom (
@@ -24,12 +32,12 @@ CREATE TABLE part (
   part_number TEXT UNIQUE PRIMARY KEY,
   name TEXT NOT NULL,
   measure_unit TEXT NOT NULL,
-  owner_id INTEGER NOT NULL,
+  owner INTEGER NOT NULL,
   status TEXT NOT NULL,
   created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
   last_modified TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   security_stock INTEGER,
-  FOREIGN KEY(owner_id) REFERENCES user(id)
+  FOREIGN KEY(owner) REFERENCES user(username)
 );
 
 CREATE TABLE project(
@@ -47,14 +55,14 @@ VALUES
 ("BBBB-0000","proyecto moto","BBBB",0);
 
 
-INSERT INTO part (part_number,name,owner_id,status,measure_unit)
+INSERT INTO part (part_number,name,owner,status,measure_unit)
 VALUES
-("AAAA-0001","coche",1,'active',"units"),
-("AAAA-0002","puerta",1,'active',"units"),
-("AAAA-0003","luna lateral",1,'active',"units"),
-("AAAA-0004","luna frontal",1,'active',"units"),
-("AAAA-0005","salpicadero",1,'active',"units"),
-("AAAA-0006","volante",1,'active',"units");
+("AAAA-0001","coche","admin",'active',"units"),
+("AAAA-0002","puerta","admin",'active',"units"),
+("AAAA-0003","luna lateral","admin",'active',"units"),
+("AAAA-0004","luna frontal","admin",'active',"units"),
+("AAAA-0005","salpicadero","admin",'active',"units"),
+("AAAA-0006","volante","admin",'active',"units");
 
 INSERT INTO bom (part_number,parent_part_number,quantity)
 VALUES

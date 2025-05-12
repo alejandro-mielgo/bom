@@ -32,6 +32,13 @@ def register():
                     (username, generate_password_hash(password), email),
                 )
                 db.commit()
+
+                db.execute(
+                    "INSERT INTO userinfo (username) VALUES (?)",
+                    (username,)
+                )
+                db.commit()
+
             except db.IntegrityError:
                 print(db.IntegrityError)
                 error = f"User {username} is already registered."
@@ -61,7 +68,7 @@ def login():
 
         if error is None:
             session.clear()
-            session['user_id'] = user['id']
+            session['username'] = user['username']
             return redirect("/")
 
         flash(error)
@@ -70,13 +77,13 @@ def login():
 
 @bp.before_app_request
 def load_logged_in_user():
-    user_id = session.get('user_id')
+    user_name = session.get('username')
 
-    if user_id is None:
+    if user_name is None:
         g.user = None
     else:
         g.user = get_db().execute(
-            'SELECT * FROM user WHERE id = ?', (user_id,)
+            'SELECT * FROM user WHERE username = ?', (user_name,)
         ).fetchone()
 
 
