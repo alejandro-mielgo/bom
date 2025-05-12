@@ -89,4 +89,18 @@ def generate_bom(part_number: str)->dict:
     (part_number, part_number)
     ).fetchall()
 
+    for child in child_parts:
+        print(dict(child))
+
     return child_parts
+
+def update_quantity(child_part:str,parent_part:str,quantity):
+    db=get_db()
+    db.execute('UPDATE bom'
+               ' SET quantity=?'
+               ' WHERE part_number=? AND parent_part_number=?',
+                (quantity,child_part,parent_part)
+                )
+    db.commit()
+
+

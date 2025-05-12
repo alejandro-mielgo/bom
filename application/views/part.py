@@ -7,7 +7,7 @@ from .db import get_db
 from .auth import login_required
 from .constants import measure_units,status_list
 from .part_utils import(
-    get_all_parts, get_orphan_parts, get_part_info, generate_bom, get_last_number, get_project_prefixes, increment_number
+    get_all_parts, get_orphan_parts, get_part_info, generate_bom, get_last_number, get_project_prefixes, increment_number,update_quantity
 )
 
 bp = Blueprint('part', __name__, url_prefix='/part')
@@ -85,6 +85,7 @@ def view(part_number):
 
     return render_template('part/info.html', part=part, bom=bom)
 
+
 @bp.route('/<string:part_number>/edit_structure', methods=('GET','POST'))
 @login_required
 def edit_structure(part_number):
@@ -122,3 +123,23 @@ def edit_info(part_number):
     part = get_part_info(part_number=part_number)
     bom = generate_bom(part_number=part_number)
     return redirect(f'/part/{part_number}')
+
+
+@bp.route('/quantity/<string:pn>/<string:parent_pn>', methods=('POST',))
+@login_required
+def set_quantity_child_in_parent(pn,parent_pn):
+    quantity=request.form['quantity']
+    view_pn = request.form['view_pn']
+    update_quantity(child_part=pn,parent_part=parent_pn,quantity=quantity)
+    return redirect(f"/part/{view_pn}/edit_structure")
+
+
+@bp.route('/delete/<string:pn>/<string:parent_pn>', methods=('GET','POST'))
+@login_required
+
+def set_delete_child_from_parent(pn,parent_pn):
+    db=get_db()
+    db.execute('DELETE FROM bom WHERE part_number=? AND parent_part_number=?',(pn,parent_pn))
+    db.commit()
+
+    return redirect(f"/part/AAAA-0001/edit_structure")

@@ -25,8 +25,7 @@
 
       <div class="py-3 ">
         <h4 class="d-inline align-middle py-2 ">Structure for {{part['part_number']}}</h4> 
-        <a href ="#" class="btn btn-primary p-2 d-inline align-middle mx-2">Save Changes</a>
-        <a href ="/part/{{part['part_number']}}" class="btn btn-secondary p-2 d-inline align-middle mx-2">Cancel</a>
+        <a href ="/part/{{part['part_number']}}" class="btn btn-secondary p-2 d-inline align-middle mx-2"> Return </a>
       </div>
 
       <table class="table" id="bom-table">
@@ -39,22 +38,35 @@
         </tr>
         {% for row in bom %}
           <tr>
+            {% if row['level']==0 %}
+                        <td class="pn-level-{{row['level']}}">
+              <a href="/part/{{row['part_number']}}">{{ row['part_number'] }}</a> 
+            </td>
+            <td class='part-name'>{{ row['name'] }}</td>
+            <td class='part-quantity'>1.0</td>
+            <td class="part_measure_unit">{{ row['measure_unit']}}</td>
+            <td class="part_status">{{ row['status']}}</td>
+          </tr>
+            {% else %}
+            
             <td class="pn-level-{{row['level']}}">
               <a href="/part/{{row['part_number']}}">{{ row['part_number'] }}</a> 
             </td>
-            <td class='part-name'><a class="btn btn-danger py-0">x</a> {{ row['name'] }}</td>
-            <td class='part-quantity'>
-              <a class="btn btn-light py-0" id="decrease-{{row['part_number']}}">-</a>
-              {{ row['quantity'] }}
-              <a class="btn btn-light py-0" id="increase-{{row['part_number']}}">+</a>
+            <td class='part-name'><a class="btn btn-danger py-0" href="/part/delete/{{row['part_number']}}/{{row['parent_part_number']}}">x</a> {{ row['name'] }}</td>
+            <td class='part-quantity' >
+              <form action="/part/quantity/{{row['part_number']}}/{{row['parent_part_number']}}" method="POST">  
+                <input type="number" value="{{ row['quantity'] }}" name="quantity" min=1>
+                <input value="{{part['part_number']}}" name="view_pn" hidden>
+                <input type="submit" value="update">
+              </form>
             </td>
             <td class="part_measure_unit">{{ row['measure_unit']}}</td>
             <td class="part_status">{{ row['status']}}</td>
           </tr>
+          
+          {% endif %}
         {% endfor %}
       </table>
-    
-
     </div>
 
 {% endblock %}
