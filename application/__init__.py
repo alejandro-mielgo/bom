@@ -30,6 +30,10 @@ def create_app(test_config=None):
     @app.route('/')
     def show_main_page():
         return render_template('base.html')
+    
+    @app.errorhandler(404)
+    def not_found(error):
+        return "<h2>Sorry, I'm afraid you are lost</h2>"
 
     from application.views import db
     db.init_app(app)
