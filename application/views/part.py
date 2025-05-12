@@ -5,6 +5,7 @@ from datetime import datetime
 
 from .db import get_db
 from .auth import login_required
+from .constants import measure_units,status_list
 
 bp = Blueprint('part', __name__, url_prefix='/part')
 
@@ -109,13 +110,13 @@ def search():
 @bp.route('/create', methods=('GET', 'POST'))
 @login_required
 def create():
-    units:tuple[str] = ('units','kg','litres','meters')
+    
     prefixes:list[str] = get_project_prefixes()
 
     if request.method=='GET':
-        return render_template('/part/create.html', units=units, prefixes=prefixes)
+        return render_template('/part/create.html', units=measure_units, prefixes=prefixes)
     
-    
+
     if request.method=='POST':
  
         prefix:str = request.form['prefix']
@@ -161,7 +162,7 @@ def edit_info(part_number):
     if request.method=='GET':
         part = get_part_info(part_number=part_number)
         bom = generate_bom(part_number=part_number)
-        return render_template('part/edit_info.html', part=part, bom=bom)
+        return render_template('part/edit_info.html', part=part, bom=bom, units=measure_units, status_list=status_list)
         
     if request.method=='POST':
         print(dict(request.form))

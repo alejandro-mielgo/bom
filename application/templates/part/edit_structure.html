@@ -16,12 +16,12 @@
     </div>
 
     <div>
-      <p>part number - {{part['part_number']}} </p> 
-      <p>name - {{part['name']}} </p>
-      <p>meaure unit - {{part['measure_unit']}} </p>
-      <p>status - {{part['status']}} </p>
-      <p>created - {{part['created']}} </p>
-      <p>last_modified - {{part['last_modified']}} </p>
+      <label>part number - {{part['part_number']}} </label> <br>
+      <label>name - {{part['name']}} </label> <br>
+      <label>meaure unit - {{part['measure_unit']}} </label> <br>
+      <label>status - {{part['status']}} </label> <br>
+      <label>created - {{part['created']}} </label> <br>
+      <label>last_modified - {{part['last_modified']}} </label>
 
       <div class="py-3 ">
         <h4 class="d-inline align-middle py-2 ">Structure for {{part['part_number']}}</h4> 
@@ -42,11 +42,11 @@
             <td class="pn-level-{{row['level']}}">
               <a href="/part/{{row['part_number']}}">{{ row['part_number'] }}</a> 
             </td>
-            <td class='part-name'><a class="btn btn-danger">x</a> {{ row['name'] }}</td>
+            <td class='part-name'><a class="btn btn-danger py-0">x</a> {{ row['name'] }}</td>
             <td class='part-quantity'>
-              <a class="btn btn-light" id="decrease-{{row['part_number']}}">-</a>
+              <a class="btn btn-light py-0" id="decrease-{{row['part_number']}}">-</a>
               {{ row['quantity'] }}
-              <a class="btn btn-light" id="increase-{{row['part_number']}}">+</a>
+              <a class="btn btn-light py-0" id="increase-{{row['part_number']}}">+</a>
             </td>
             <td class="part_measure_unit">{{ row['measure_unit']}}</td>
             <td class="part_status">{{ row['status']}}</td>

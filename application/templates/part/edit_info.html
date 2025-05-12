@@ -19,8 +19,18 @@
 
       <label>part number - {{part['part_number']}} </label><br>
       <label>name - </label> <input value="{{part['name']}}" name="name"><br>
-      <label>meaure unit - </label> <input value="{{part['measure_unit']}}" name="measure_unit"><br> 
-      <label>status - </label><input value="{{part['status']}}" name="status"> <br>
+      <label>meaure unit - </label> 
+      <select value="{{part['measure_unit']}}" name="measure_unit">
+        {% for unit in units %}
+          <option value="{{unit}}">{{unit}}</option>
+        {% endfor %}
+      </select><br>
+      <label>status - </label> 
+      <select value="{{part['status']}}" name="status">
+        {% for status in status_list %}
+          <option value="{{status}}">{{status}}</option>
+        {% endfor %}
+      </select><br> 
       <label>created - {{part['created']}} </label><br>
       <label>last_modified - {{part['last_modified']}} </label>
   </form>
