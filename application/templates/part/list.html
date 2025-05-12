@@ -1,0 +1,25 @@
+{% extends 'part/common.html' %}
+
+{% block header %}
+  <h4>{% block title %}Part List{% endblock %}</h4>
+{% endblock %}
+
+{% block content %}
+      <table class="table" id="bom-table">
+        <tr>
+          <th>Part number</th>
+          <th>Name</th>
+          <th>Status</th>
+        </tr>
+        {% for part in parts %}
+          <tr>
+            <td>
+              <a href="/part/{{part['part_number']}}">{{ part['part_number'] }}</a> 
+            </td>
+            <td class='part-name'>{{ part['name'] }}</td>
+            <td class="part_status">{{ part['status']}}</td>
+          </tr>
+        {% endfor %}
+      </table>
+
+{% endblock %}

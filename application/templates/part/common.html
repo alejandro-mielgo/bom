@@ -1,16 +1,14 @@
 {% extends 'base.html' %}
 
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" aria-current="page" href="/">Home</a>
-    <a class="nav-link" href="/part/search">Search</a>
-    <a class="nav-link" href="/part/create">Create PN</a>
-    <a class="nav-link" href="#">BOM </a>
-    <a class="nav-link disabled" aria-disabled="true">Disabled</a>
-    {% if g.user %}
-      <a class="nav-link"> Logged in as <a href="#">{{ g.user['username'] }}</a></a>
-      <a class="nav-link" href="{{ url_for('auth.logout') }}">Log Out</a>
-    {% else  %}
-      <a class="nav-link" href="{{ url_for('auth.register') }}">Register</a>
-      <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
-    {% endif  %}
-  </nav>
+
+    {% block secondary_navbar %}
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="nav-link" href="/part/search">Search</a>
+            <a class="nav-link" href="/part/create">Create PN</a>
+            <a class="nav-link" href="/part/all">All parts </a>
+            <a class="nav-link" href="/part/orphan#">Orphan parts</a>
+    
+        </nav>
+   {% endblock %}
+
+  {% block content %}{% endblock %}

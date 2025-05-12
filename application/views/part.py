@@ -53,6 +53,17 @@ def get_all_parts():
     return parts
 
 
+def get_orphan_parts():
+    db=get_db()
+    parts = db.execute(
+        """
+        SELECT *
+        FROM part LEFT JOIN bom ON part.part_number = bom.part_number
+        WHERE bom.part_number IS NULL
+        """
+    ).fetchall()
+    return parts
+
 def generate_bom(part_number: str)->dict:
     db = get_db()
     child_parts = db.execute(
@@ -87,6 +98,20 @@ def generate_bom(part_number: str)->dict:
     ).fetchall()
 
     return child_parts
+
+@bp.route('/menu',methods=('GET',))
+def menu():
+    return render_template('part/common.html')
+
+@bp.route('/all',methods=('GET',))
+def all():
+    parts = get_all_parts()
+    return render_template('part/list.html',parts=parts)
+
+@bp.route('/orphan',methods=('GET',))
+def orphan():
+    parts = get_orphan_parts()
+    return render_template('part/list.html',parts=parts)
 
 
 @bp.route('/search', methods=('GET', 'POST'))
