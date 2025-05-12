@@ -1,12 +1,12 @@
 import os
 from flask import Flask,render_template
-from flask_cors import CORS,cross_origin
+from flask_cors import CORS, cross_origin
 
 
 # flask --app application run --debug
 
 def create_app(test_config=None):
-    # create and configure the app
+    # create and configure the ap
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
         SECRET_KEY='dev',
