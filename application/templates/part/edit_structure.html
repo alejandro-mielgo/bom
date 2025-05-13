@@ -20,26 +20,36 @@
       <label>name - {{part['name']}} </label> <br>
       <label>meaure unit - {{part['measure_unit']}} </label> <br>
       <label>status - {{part['status']}} </label> <br>
-      <label>created - {{part['created']}} </label> <br>
+      <label>created - {{part['created']}} by  {{part['owner']}} </label> <br>
       <label>last_modified - {{part['last_modified']}} </label>
 
-      <div class="py-3 ">
+      <div class="my-3">
         <h4 class="d-inline align-middle py-2 ">Structure for {{part['part_number']}}</h4> 
         <a href ="/part/{{part['part_number']}}" class="btn btn-secondary p-2 d-inline align-middle mx-2"> Return </a>
       </div>
+<!-------- FORMULARIO NUEVA PIEZA -------------------------------------------------------------------> 
+      <form class="my-3" action="/part/{{part['part_number']}}/add_child" method="POST">
+        <input type="text" name="new_child">
+        <input type="submit" value="add pn">
+      </form>
 
+<!-------- TABLA BOM  -------------------------------------------------------------------------------> 
       <table class="table" id="bom-table">
         <tr>
+          <th>Delete</th>
           <th>Part number</th>
           <th>Name</th>
           <th>Quantity</th>
           <th>Unit</th>
           <th>Status</th>
         </tr>
+
         {% for row in bom %}
+<!-------- FILAS NO EDITABLES  -------------------------------------------------------------------------------> 
           <tr>
-            {% if row['level']==0 %}
-                        <td class="pn-level-{{row['level']}}">
+            {% if row['level']!= 1 %}
+            <td>·</td>
+            <td class="pn-level-{{row['level']}}">
               <a href="/part/{{row['part_number']}}">{{ row['part_number'] }}</a> 
             </td>
             <td class='part-name'>{{ row['name'] }}</td>
@@ -48,14 +58,15 @@
             <td class="part_status">{{ row['status']}}</td>
           </tr>
             {% else %}
-            
-            <td class="pn-level-{{row['level']}}">
-              <a href="/part/{{row['part_number']}}">{{ row['part_number'] }}</a> 
+<!-------- FILAS  EDITABLES  ------------------------------------------------------------------------------->           
+            <td class=>
+              <a class="btn btn-danger py-0" href="/part/delete/{{row['part_number']}}/{{row['parent_part_number']}}">x</a>
             </td>
-            <td class='part-name'><a class="btn btn-danger py-0" href="/part/delete/{{row['part_number']}}/{{row['parent_part_number']}}">x</a> {{ row['name'] }}</td>
+            <td class="pn-level-{{row['level']}}"> {{ row['part_number'] }}</td>
+            <td class='part-name'> {{ row['name'] }}</td>
             <td class='part-quantity' >
               <form action="/part/quantity/{{row['part_number']}}/{{row['parent_part_number']}}" method="POST">  
-                <input type="number" value="{{ row['quantity'] }}" name="quantity" min=1>
+                <input type="number" class="qty" value="{{ row['quantity'] }}" name="quantity" min=1 >
                 <input value="{{part['part_number']}}" name="view_pn" hidden>
                 <input type="submit" value="update">
               </form>

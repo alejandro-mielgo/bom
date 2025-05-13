@@ -44,5 +44,8 @@ def create_app(test_config=None):
     from application.views import part
     app.register_blueprint(part.bp)
 
+    from application.views import api
+    app.register_blueprint(api.bp)
+
 
     return app

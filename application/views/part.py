@@ -7,7 +7,7 @@ from .db import get_db
 from .auth import login_required
 from .constants import measure_units,status_list
 from .part_utils import(
-    get_all_parts, get_orphan_parts, get_part_info, generate_bom, get_last_number, get_project_prefixes, increment_number,update_quantity
+    get_all_parts, get_orphan_parts, get_part_info, generate_bom, get_last_number, get_project_prefixes, increment_number,update_quantity, get_part_list
 )
 
 bp = Blueprint('part', __name__, url_prefix='/part')
@@ -109,7 +109,7 @@ def edit_info(part_number):
         name=request.form['name']
         measure_unit=request.form['measure_unit']
         status=request.form['status']
-        last_modified = datetime.now()
+        last_modified = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
         db=get_db()
         db.execute(
@@ -128,9 +128,11 @@ def edit_info(part_number):
 @bp.route('/quantity/<string:pn>/<string:parent_pn>', methods=('POST',))
 @login_required
 def set_quantity_child_in_parent(pn,parent_pn):
+
     quantity=request.form['quantity']
     view_pn = request.form['view_pn']
     update_quantity(child_part=pn,parent_part=parent_pn,quantity=quantity)
+    
     return redirect(f"/part/{view_pn}/edit_structure")
 
 
@@ -138,8 +140,43 @@ def set_quantity_child_in_parent(pn,parent_pn):
 @login_required
 
 def set_delete_child_from_parent(pn,parent_pn):
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    
     db=get_db()
     db.execute('DELETE FROM bom WHERE part_number=? AND parent_part_number=?',(pn,parent_pn))
+    db.execute('UPDATE part SET last_modified=? WHERE part_number=?',(now,parent_pn))
     db.commit()
 
     return redirect(f"/part/AAAA-0001/edit_structure")
+
+
+@bp.route('<string:parent_pn>/add_child', methods=('POST',))
+def add_child(parent_pn):
+    db=get_db()
+    child_pn = request.form['new_child']
+    
+    existing_parts = get_part_list()
+    if child_pn not in existing_parts:
+        flash(f'ERROR - {child_pn} does not exist in database. Create part before adding it')
+        return redirect(f"/part/{parent_pn}/edit_structure")
+
+    if parent_pn == child_pn:
+        flash(f'ERROR - stop trying to break the database.\n Kindly, the admin')
+        return redirect(f"/part/{parent_pn}/edit_structure")
+
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    
+    try:
+        db.execute(
+            'INSERT INTO bom (part_number,parent_part_number,quantity)'
+            'VALUES (?,?,1)',
+            (child_pn,parent_pn)
+        )
+        db.execute('UPDATE part SET last_modified=? WHERE part_number=?',(now,parent_pn))
+        db.commit()
+    except db.IntegrityError:
+        flash(f"{child_pn} number is already in {parent_pn}. Change quantity isntead")
+    
+    return redirect(f"/part/{parent_pn}/edit_structure")
+
+

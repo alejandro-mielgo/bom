@@ -1,4 +1,6 @@
+from datetime import datetime
 from .db import get_db
+
 
 """This file contains the functions to get data from the database """
 
@@ -35,6 +37,7 @@ def get_part_info(part_number:str)->dict:
         'SELECT * FROM part JOIN userinfo ON part.owner=userinfo.username'
         ' WHERE part_number=?',(part_number,)
     ).fetchone()
+    print(part)
     print(dict(part))
     return part
 
@@ -101,6 +104,18 @@ def update_quantity(child_part:str,parent_part:str,quantity):
                ' WHERE part_number=? AND parent_part_number=?',
                 (quantity,child_part,parent_part)
                 )
+    
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    db.execute('UPDATE part SET last_modified=? WHERE part_number=?',(now,parent_part))
     db.commit()
+
+
+def get_part_list()->list[str]:
+    db=get_db()
+    parts = db.execute(
+        'SELECT * FROM part'
+    ).fetchall()
+
+    return [part['part_number'] for part in parts]
 
 
